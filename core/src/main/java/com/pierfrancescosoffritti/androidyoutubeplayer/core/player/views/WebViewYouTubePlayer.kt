@@ -22,7 +22,11 @@ import java.util.*
 /**
  * WebView implementation of [YouTubePlayer]. The player runs inside the WebView, using the IFrame Player API.
  */
-internal class WebViewYouTubePlayer constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) : WebView(context, attrs, defStyleAttr),
+internal class WebViewYouTubePlayer constructor(
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0
+) : WebView(context, attrs, defStyleAttr),
     YouTubePlayer, YouTubePlayerBridge.YouTubePlayerBridgeCallbacks {
 
     private lateinit var youTubePlayerInitListener: (YouTubePlayer) -> Unit
@@ -32,7 +36,7 @@ internal class WebViewYouTubePlayer constructor(context: Context, attrs: Attribu
 
     internal var isBackgroundPlaybackEnabled = false
 
-    internal var injectedJavascript = ""
+    private var injectedJavascript = ""
 
     internal fun initialize(initListener: (YouTubePlayer) -> Unit, playerOptions: IFramePlayerOptions?) {
         youTubePlayerInitListener = initListener
