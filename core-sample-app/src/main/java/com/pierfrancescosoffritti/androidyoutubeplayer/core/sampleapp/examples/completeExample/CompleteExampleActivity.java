@@ -9,22 +9,23 @@ import android.util.Log;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.utils.YouTubePlayerUtils;
-import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView;
-import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer;
-import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener;
-import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.YouTubePlayerFullScreenListener;
-import com.pierfrancescosoffritti.androidyoutubeplayer.core.ui.PlayerUiController;
-import com.pierfrancescosoffritti.androidyoutubeplayer.core.ui.menu.MenuItem;
-import com.pierfrancescosoffritti.androidyoutubeplayer.core.sampleapp.utils.VideoIdsProvider;
-import com.pierfrancescosoffritti.androidyoutubeplayer.core.sampleapp.utils.VideoInfo;
-import com.pierfrancescosoffritti.androidyoutubeplayer.core.sampleapp.utils.FullScreenHelper;
-import com.pierfrancescosoffritti.androidyoutubeplayer.core.sampleapp.utils.YouTubeDataEndpoint;
-import com.pierfrancescosoffritti.aytplayersample.R;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer;
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener;
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.YouTubePlayerFullScreenListener;
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.utils.YouTubePlayerUtils;
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView;
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.sampleapp.utils.FullScreenHelper;
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.sampleapp.utils.VideoIdsProvider;
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.sampleapp.utils.VideoInfo;
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.sampleapp.utils.YouTubeDataEndpoint;
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.ui.PlayerUiController;
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.ui.menu.MenuItem;
+import com.pierfrancescosoffritti.aytplayersample.R;
+
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
@@ -70,6 +71,7 @@ public class CompleteExampleActivity extends AppCompatActivity {
         getLifecycle().addObserver(youTubePlayerView);
 
         youTubePlayerView.addYouTubePlayerListener(new AbstractYouTubePlayerListener() {
+
             @Override
             public void onReady(@NonNull YouTubePlayer youTubePlayer) {
                 YouTubePlayerUtils.loadOrCueVideo(
@@ -83,6 +85,27 @@ public class CompleteExampleActivity extends AppCompatActivity {
                 setPlayNextVideoButtonClickListener(youTubePlayer);
             }
         });
+
+        youTubePlayerView.setInjectedJavascript("  function getVideoId(link) {\n" +
+                "            return link.replace('https://m.youtube.com/watch?v=', '').replace('https://www.youtube.com/watch?v=', '').replace('&feature=emb_rel_pause', '');\n" +
+                "        }\n" +
+                "    \n" +
+                "        function getYoutubeUrl(videoId) {\n" +
+                "            return 'https://www.youtube.com/embed/' + videoId;\n" +
+                "        }\n" +
+                "    \n" +
+                "        function getRecommendPlaylist() {\n" +
+                "            var videoIds = [];\n" +
+                "            var iframe = document.getElementById('player');\n" +
+                "            var mediaItems = iframe.contentWindow.document.querySelectorAll(\"a[class='ytp-suggestion-link']\");\n" +
+                "            for (i=0; i < mediaItems.length; i++) {\n" +
+                "                if (getVideoId(mediaItems[i].href)) {\n" +
+                "                    videoIds.push(getVideoId(mediaItems[i].href));\n" +
+                "                }\n" +
+                "            }\n" +
+                "            return videoIds;\n" +
+                "        }");
+        youTubePlayerView.initialize(new AbstractYouTubePlayerListener() {});
     }
 
     /**
