@@ -2,11 +2,10 @@ package com.pierfrancescosoffritti.androidyoutubeplayer.core.player
 
 import android.os.Handler
 import android.os.Looper
-import androidx.annotation.RestrictTo
-
 import android.text.TextUtils
+import android.util.Log
 import android.webkit.JavascriptInterface
-
+import androidx.annotation.RestrictTo
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.YouTubePlayerListener
 
 
@@ -168,6 +167,14 @@ class YouTubePlayerBridge(private val youTubePlayerOwner: YouTubePlayerBridgeCal
         mainThreadHandler.post {
             for (listener in youTubePlayerOwner.getListeners())
                 listener.onVideoId(youTubePlayerOwner.getInstance(), videoId)
+        }
+    }
+
+    @JavascriptInterface
+    fun sendPlaylist(playlist: Array<String>) {
+        mainThreadHandler.post {
+            for (listener in youTubePlayerOwner.getListeners())
+                listener.onPlaylist(youTubePlayerOwner.getInstance(), playlist)
         }
     }
 

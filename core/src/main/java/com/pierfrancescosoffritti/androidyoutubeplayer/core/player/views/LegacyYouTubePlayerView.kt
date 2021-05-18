@@ -84,6 +84,10 @@ internal class LegacyYouTubePlayerView(context: Context, attrs: AttributeSet? = 
         }
     }
 
+    fun setInjectedJavascript(javascript: String) {
+        youTubePlayer.setInjectedJavascript(javascript)
+    }
+
     /**
      * Initialize the player. You must call this method before using the player.
      * @param youTubePlayerListener listener for player events
@@ -219,6 +223,8 @@ internal class LegacyYouTubePlayerView(context: Context, attrs: AttributeSet? = 
 
         return defaultPlayerUiController
     }
+
+    fun getPlaylist() = youTubePlayer.getPlaylist()
 
     fun enterFullScreen() = fullScreenHelper.enterFullScreen()
 

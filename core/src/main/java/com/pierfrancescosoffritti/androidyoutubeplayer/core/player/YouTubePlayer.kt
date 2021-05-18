@@ -31,6 +31,8 @@ interface YouTubePlayer {
      */
     fun setVolume(volumePercent: Int)
 
+    fun getPlaylist()
+
     /**
      *
      * @param time The absolute time in seconds to seek to

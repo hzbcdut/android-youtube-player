@@ -10,6 +10,7 @@
             overflow: hidden;
             position: fixed;
         }
+
     </style>
 
     <head>
@@ -18,7 +19,7 @@
     </head>
 
     <body>
-        <div id="youTubePlayerDOM"></div>
+        <div id="player"></div>
     </body>
 
     <script type="text/javascript">
@@ -39,14 +40,16 @@
 
             YouTubePlayerBridge.sendYouTubeIFrameAPIReady();
             
-    		player = new YT.Player('youTubePlayerDOM', {
+    		player = new YT.Player('player', {
     			
                 height: '100%',
     			width: '100%',
     			
                 events: {
     				onReady: function(event) { YouTubePlayerBridge.sendReady() },
-    				onStateChange: function(event) { sendPlayerStateChange(event.data) },
+    				onStateChange: function(event) {
+    				    sendPlayerStateChange(event.data)
+                    },
     				onPlaybackQualityChange: function(event) { YouTubePlayerBridge.sendPlaybackQualityChange(event.data) },
     				onPlaybackRateChange: function(event) { YouTubePlayerBridge.sendPlaybackRateChange(event.data) },
     				onError: function(error) { YouTubePlayerBridge.sendError(error.data) },
@@ -143,6 +146,8 @@
         function setVolume(volumePercent) {
             player.setVolume(volumePercent);
         }
+
+        <<injectedJavascript>>
 
     </script>
 </html>

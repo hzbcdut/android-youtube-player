@@ -16,6 +16,7 @@ internal class PlaybackResumer : AbstractYouTubePlayerListener() {
 
     private var currentVideoId: String? = null
     private var currentSecond: Float = 0f
+    private var currentPlaylist: List<String> = listOf()
 
     fun resume(youTubePlayer: YouTubePlayer) {
         currentVideoId?.let { videoId ->
@@ -57,6 +58,10 @@ internal class PlaybackResumer : AbstractYouTubePlayerListener() {
 
     override fun onVideoId(youTubePlayer: YouTubePlayer, videoId: String) {
         currentVideoId = videoId
+    }
+
+    override fun onPlaylist(youTubePlayer: YouTubePlayer, playlist: Array<String>) {
+        currentPlaylist = playlist.toList()
     }
 
     fun onLifecycleResume() {

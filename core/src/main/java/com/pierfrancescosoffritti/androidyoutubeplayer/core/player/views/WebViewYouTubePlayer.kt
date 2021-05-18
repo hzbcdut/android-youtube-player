@@ -18,11 +18,12 @@ import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.options.IFram
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.utils.Utils
 import java.util.*
 
+
 /**
  * WebView implementation of [YouTubePlayer]. The player runs inside the WebView, using the IFrame Player API.
  */
-internal class WebViewYouTubePlayer constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0)
-    : WebView(context, attrs, defStyleAttr), YouTubePlayer, YouTubePlayerBridge.YouTubePlayerBridgeCallbacks {
+internal class WebViewYouTubePlayer constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) : WebView(context, attrs, defStyleAttr),
+    YouTubePlayer, YouTubePlayerBridge.YouTubePlayerBridgeCallbacks {
 
     private lateinit var youTubePlayerInitListener: (YouTubePlayer) -> Unit
 
@@ -31,9 +32,15 @@ internal class WebViewYouTubePlayer constructor(context: Context, attrs: Attribu
 
     internal var isBackgroundPlaybackEnabled = false
 
+    internal var injectedJavascript = ""
+
     internal fun initialize(initListener: (YouTubePlayer) -> Unit, playerOptions: IFramePlayerOptions?) {
         youTubePlayerInitListener = initListener
         initWebView(playerOptions ?: IFramePlayerOptions.default)
+    }
+
+    fun setInjectedJavascript(javascript: String) {
+        injectedJavascript = javascript
     }
 
     override fun onYouTubeIFrameAPIReady() = youTubePlayerInitListener(this)
@@ -62,6 +69,17 @@ internal class WebViewYouTubePlayer constructor(context: Context, attrs: Attribu
 
     override fun unMute() {
         mainThreadHandler.post { loadUrl("javascript:unMute()") }
+    }
+
+    override fun getPlaylist() {
+        mainThreadHandler.post {
+            loadUrl(
+                "javascript:(function() {" +
+                        "var videoIds = getRecommendPlaylist();" +
+                        "YouTubePlayerBridge.sendPlaylist(videoIds);" +
+                        "})()"
+            )
+        }
     }
 
     override fun setVolume(volumePercent: Int) {
@@ -101,8 +119,9 @@ internal class WebViewYouTubePlayer constructor(context: Context, attrs: Attribu
         addJavascriptInterface(YouTubePlayerBridge(this), "YouTubePlayerBridge")
 
         val htmlPage = Utils
-                .readHTMLFromUTF8File(resources.openRawResource(R.raw.ayp_youtube_player))
-                .replace("<<injectedPlayerVars>>", playerOptions.toString())
+            .readHTMLFromUTF8File(resources.openRawResource(R.raw.ayp_youtube_player))
+            .replace("<<injectedPlayerVars>>", playerOptions.toString())
+            .replace("<<injectedJavascript>>", injectedJavascript)
 
         loadDataWithBaseURL(playerOptions.getOrigin(), htmlPage, "text/html", "utf-8", null)
 

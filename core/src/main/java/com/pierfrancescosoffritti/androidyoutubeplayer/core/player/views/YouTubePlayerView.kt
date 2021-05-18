@@ -98,6 +98,10 @@ class YouTubePlayerView(context: Context, attrs: AttributeSet? = null, defStyleA
         })
     }
 
+    fun setInjectedJavascript(javascript: String) {
+        legacyTubePlayerView.setInjectedJavascript(javascript)
+    }
+
     /**
      * Initialize the player. You must call this method before using the player.
      * @param youTubePlayerListener listener for player events
@@ -186,6 +190,8 @@ class YouTubePlayerView(context: Context, attrs: AttributeSet? = null, defStyleA
 
     fun removeYouTubePlayerListener(youTubePlayerListener: YouTubePlayerListener) =
             legacyTubePlayerView.youTubePlayer.removeListener(youTubePlayerListener)
+
+    fun getPlaylist() = legacyTubePlayerView.getPlaylist()
 
     fun enterFullScreen() = legacyTubePlayerView.enterFullScreen()
 
